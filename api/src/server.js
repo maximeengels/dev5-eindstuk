@@ -20,13 +20,12 @@ http.Server(app);
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
-    // to support URL-encoded bodies
     extended: true
   })
 );  
 
 app.get('/test', (req, res) => {
-  res.status(204).send();
+  res.status(200).send();
 })
 
 app.get('/', async (req, res) => {
@@ -74,39 +73,47 @@ app.get("/storyblock/", async (req, res) => {
   res.json({res: result});
 });
 
+
+/*******************************/
+/*      Initialize Tables      */
+/*******************************/
+
 async function initialiseTables() {
-  await pg.schema.hasTable('storyblock').then(async (exists) => {
+  await pg.schema.hasTable('artistTable').then(async (exists) => {
     if (!exists) {
       await pg.schema
-        .createTable('storyblock', (table) => {
+        .createTable('artistTable', (table) => {
           table.increments();
           table.uuid('uuid');
-          table.string('content');
-          table.string('story_id');
-          table.integer('order');
+          table.string('artistName');
+          table.string('description');
+          table.string('genreName');
           table.timestamps(true, true);
         })
         .then(async () => {
-          console.log('created table storyblock');
+          console.log('created artist table');
         });
-
     }
   });
-  await pg.schema.hasTable('story').then(async (exists) => {
+  await pg.schema.hasTable('genreTable').then(async (exists) => {
     if (!exists) {
       await pg.schema
-        .createTable('story', (table) => {
+        .createTable('genreTable', (table) => {
           table.increments();
           table.uuid('uuid');
           table.string('title');
-          table.string('summary');
           table.timestamps(true, true);
         })
         .then(async () => {
-          console.log('created table story');
+          console.log('created a genre table');
           for (let i = 0; i < 10; i++) {
             const uuid = Helpers.generateUUID();
-            await pg.table('story').insert({ uuid, title: `random element number ${i}` })
+            await pg
+            .table('genreTable')
+            .insert({ 
+              uuid, 
+              title: `Genre No.${i}` 
+            })
           }
         });
       }
