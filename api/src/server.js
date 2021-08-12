@@ -24,54 +24,99 @@ app.use(
   })
 );  
 
+// Endpoint test
 app.get('/test', (req, res) => {
   res.status(200).send();
 })
 
-app.get('/', async (req, res) => {
-  const result = await pg
-    .select(['uuid', 'title', 'created_at'])
-    .from('story')
-  res.json({
-      res: result
-  })
-})
 
-app.get('/story/:uuid', async (req, res) => {
+/*******************************/
+/*       Artist Endpoints      */
+/*******************************/
+
+/* Create Artist */
+app.post("/artist", (req, res) => {
+  let uuid = Helpers.generateUUID();
+    pg.insert({
+      uuid: uuid,
+      artistName: req.body.artistName,
+      description: req.body.description,
+      genreName: req.body.genreName,
+      created_at: new Date(),
+    })
+      .into("artistTable")
+      .then(() => {
+        res.json({ uuid: uuid });
+    });
+});
+
+/* Get Artist By UUID */
+app.get('/artist/:uuid', async (req, res) => {
   const result = await pg
     .select(['uuid', 'title', 'created_at'])
-    .from('story')
+    .from('artistTable')
     .where({uuid: req.params.uuid})
   res.json({
       res: result
   })
 })
 
+/* Get All Artists */
+app.get("/artists", async (req, res) => {
+  const result = await pg
+  .select(["uuid", "artistName", "description", "genreName", "created_at"])
+  .from("artistTable")
+  res.json({res: result})
+  // res.status(200).send()
+})
+
+/* Update Artist By UUID */
+app.patch("/artist/:uuid", async (req, res) => {
+  if(Helpers.checkParameters({uuid: 'string'}, req.body, true)){
+    pg('artistTable')
+      .where({uuid: req.params.uuid})
+      .update(req.body)
+  } else {
+    res.status(400).send("Invalid parameters");
+  }
+});
+
 /* Delete Request */
-app.delete("/storyblock/", async (req, res) => {
+app.delete("/artist/", async (req, res) => {
   if(req.body.hasOwnProperty('uuid')){
-    const result = await pg.from("storyblock").where({ uuid: req.body.uuid }).del().then((data) => {
-        console.log(`Delete storyblock with following uuid ${req.body.uuid}`);
+    const result = await pg.from("artistTable").where({ uuid: req.body.uuid }).del().then((data) => {
+        console.log(`Delete storyblock with following uuid ${req.body.uuid}`)
         res.json(data)
     }).catch(() =>  res.status(400).send())
   }else{
     console.log("No uuid found")
     res.status(400).send()
   }
-});
+})
 
-/* Show All Records */
-app.get("/", async (req, res) => {
-  const result = await pg.select(["uuid", "title", "created_at"]).from("story");
-  res.json({res: result});
-});
-app.get("/test", (req, res) => {
-  res.status(200).send();
-});
-app.get("/storyblock/", async (req, res) => {
-  const result = await pg.select(["uuid", "content","story_id", "created_at"]).from("storyblock");
-  res.json({res: result});
-});
+
+/*******************************/
+/*       Genre Endpoints       */
+/*******************************/
+
+// app.get('/', async (req, res) => {
+//   const result = await pg
+//     .select(['uuid', 'title', 'created_at'])
+//     .from('story')
+//   res.json({
+//       res: result
+//   })
+// })
+
+// app.get('/story/:uuid', async (req, res) => {
+//   const result = await pg
+//     .select(['uuid', 'title', 'created_at'])
+//     .from('story')
+//     .where({uuid: req.params.uuid})
+//   res.json({
+//       res: result
+//   })
+// })
 
 
 /*******************************/
