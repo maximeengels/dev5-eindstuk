@@ -44,9 +44,9 @@ app.post("/artist", (req, res) => {
       genreName: req.body.genreName,
       created_at: new Date(),
     })
-      .into("artistTable")
-      .then(() => {
-        res.json({ uuid: uuid });
+    .into("artistTable")
+    .then(() => {
+      res.json({ uuid: uuid });
     });
 });
 
@@ -72,17 +72,13 @@ app.get("/artists", async (req, res) => {
 
 /* Update Artist By UUID */
 app.patch("/artist/:uuid", async (req, res) => {
-  if(Helpers.checkParameters({uuid: 'string'}, req.body, true)){
     pg('artistTable')
       .where({uuid: req.params.uuid})
       .update(req.body)
-  } else {
-    res.status(400).send("Invalid parameters");
-  }
 });
 
 /* Delete Request */
-app.delete("/artist/", async (req, res) => {
+app.delete("/artist", async (req, res) => {
   if(req.body.hasOwnProperty('uuid')){
     const result = await pg.from("artistTable").where({ uuid: req.body.uuid }).del().then((data) => {
         console.log(`Delete storyblock with following uuid ${req.body.uuid}`)
@@ -99,25 +95,53 @@ app.delete("/artist/", async (req, res) => {
 /*       Genre Endpoints       */
 /*******************************/
 
-// app.get('/', async (req, res) => {
-//   const result = await pg
-//     .select(['uuid', 'title', 'created_at'])
-//     .from('story')
-//   res.json({
-//       res: result
-//   })
-// })
+/* Create Genre */
+app.post("/genre", (req, res) => {
+  let uuid = Helpers.generateUUID();
+    pg.insert({
+      uuid: uuid,
+      created_at: new Date(),
+    })
+    .into("genreTable")
+    .then(() => {
+      res.json({ uuid: uuid });
+    });
+});
 
-// app.get('/story/:uuid', async (req, res) => {
-//   const result = await pg
-//     .select(['uuid', 'title', 'created_at'])
-//     .from('story')
-//     .where({uuid: req.params.uuid})
-//   res.json({
-//       res: result
-//   })
-// })
+app.get('/genres', async (req, res) => {
+  const result = await pg
+    .select(['uuid', 'title', 'created_at'])
+    .from('genreTable')
+  res.json({
+      res: result
+  })
+})
 
+app.get('/genre/:uuid', async (req, res) => {
+  const result = await pg
+    .select(['uuid', 'title', 'created_at'])
+    .from('genreTable')
+    .where({uuid: req.params.uuid})
+  res.json({
+      res: result
+  })
+})
+
+/* Update Genre By UUID */
+app.patch("/genre/:uuid", async (req, res) => {
+  pg('genreTable')
+    .where({uuid: req.params.uuid})
+    .update(req.body)
+});
+
+app.delete("/genre", (req, res) => {
+  pg('genreTable')
+    .where({ uuid: req.body.uuid })
+    .del()
+    .then(() => {
+      res.sendStatus(200);
+  })
+});
 
 /*******************************/
 /*      Initialize Tables      */
