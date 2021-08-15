@@ -1,7 +1,6 @@
 
 const supertest = require("supertest")
 const app = require("./../server.js")
-const Helpers = require('./../utils/helpers.js')
 
 const request = supertest(app)
 
@@ -22,10 +21,10 @@ describe('CRUD endpoint tests', () => {
   })
   it("Responds with 200 and get all genres", async (done) => {
     try {
-      const response = await request.get("/genres");
-      expect(response.status).toBe(200);
-      expect(typeof response.body).toBe("object");
-      done();
+      const response = await request.get("/genres")
+      expect(response.status).toBe(200)
+      expect(typeof response.body).toBe("object")
+      done()
     } catch (error) {}
   })
   it("Return 200 when genre is deleted", async (done) => {
