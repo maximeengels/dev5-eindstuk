@@ -9,7 +9,7 @@ let genreID
 
 describe("E2E test", () => {
     it("Post artist to database and return UUID", async(done) => {
-        const response = await request.post('/artist')
+        const response = await request.post('/postArtist')
         .send({
             artistName: "Equal Idiots"
         })
@@ -30,7 +30,7 @@ describe("E2E test", () => {
         done()
     })
     it("Updates artist by UUID", async(done) => {
-        const response = await request.patch("/artist/" + artistID)
+        const response = await request.patch("/updateArtist/" + artistID)
         .send({
             artistName: "Amenra"
         })
@@ -44,12 +44,12 @@ describe("E2E test", () => {
         done()
     })
     it("Return 200 when artist is deleted", async(done) => {
-        const response = await request.delete("/artist").send({ uuid: artistID })
+        const response = await request.delete("/deleteArtist").send({ uuid: artistID })
         expect(response.status).toBe(200)
         done()
     })
     it("Post genre to database and return UUID", async(done) => {
-        const response = await request.post('/genre')
+        const response = await request.post('/postGenre')
         .send({
             genreName: "Rock"
         })
@@ -64,7 +64,7 @@ describe("E2E test", () => {
         done()
     })
     it("Updates genre by UUID", async(done) => {
-        const response = await request.patch("/genre/" + genreID)
+        const response = await request.patch("/updateGenre/" + genreID)
         .send({
             title: "Hiphop"
         })
@@ -78,7 +78,7 @@ describe("E2E test", () => {
         done()
     })
     it("Return 200 when genre is deleted", async(done) => {
-        const response = await request.delete("/genre").send({ uuid: genreID })
+        const response = await request.delete("/deleteGenre").send({ uuid: genreID })
         expect(response.status).toBe(200)
         done()
     })
