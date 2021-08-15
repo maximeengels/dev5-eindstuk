@@ -30,12 +30,14 @@ app.get("/test", (req, res) => {
 })
 
 
-/*******************************/
-/*       Artist Endpoints      */
-/*******************************/
+/*=================== Artist Endpoints =====================*/
 
-/* Create Artist */
-app.post("/artist", (req, res) => {
+/**
+* POST an artist
+* @param: uuid, artistName, description, genreName
+* @returns: the uuid of posted artist
+*/
+app.post("/postArtist", (req, res) => {
   let uuid = Helpers.generateUUID()
     pg.insert({
       uuid: uuid,
@@ -50,7 +52,11 @@ app.post("/artist", (req, res) => {
     })
 })
 
-/* Get Artist By UUID */
+/**
+ * GET artist by UUID
+ * @param: uuid 
+ * @returns: one artist specified by uuid
+ */
 app.get('/artist/:uuid', async (req, res) => {
   const result = await pg
     .select(["uuid", "artistName", "description", "genreName", "created_at"])
@@ -61,7 +67,11 @@ app.get('/artist/:uuid', async (req, res) => {
   })
 })
 
-/* Get All Artists */
+/**
+* GET all artists
+* @param: none
+* @returns: all artists from artist table
+*/
 app.get("/artists", async (req, res) => {
   const result = await pg
   .select(["uuid", "artistName", "description", "genreName", "created_at"])
@@ -70,8 +80,12 @@ app.get("/artists", async (req, res) => {
   // res.status(200).send()
 })
 
-/* Update Artist By UUID */
-app.patch("/artist/:uuid", (req, res) => {
+/**
+* PATCH artist by UUID
+* @param: object with properties that are getting patched
+* @returns: status code 200
+*/
+app.patch("/updateArtist/:uuid", (req, res) => {
     pg('artistTable')
       .where({uuid: req.params.uuid})
       .update(req.body)
@@ -80,8 +94,12 @@ app.patch("/artist/:uuid", (req, res) => {
       })
 })
 
-/* Delete Request */
-app.delete("/artist", (req, res) => {
+/**
+* DELETE artist
+* @param: uuid
+* @returns: status code 200
+*/
+app.delete("/deleteArtist", (req, res) => {
   pg('artistTable')
     .where({ uuid: req.body.uuid })
     .del()
@@ -91,12 +109,15 @@ app.delete("/artist", (req, res) => {
 })
 
 
-/*******************************/
-/*       Genre Endpoints       */
-/*******************************/
 
-/* Create Genre */
-app.post("/genre", (req, res) => {
+/*=================== Genre Endpoints =====================*/
+
+/**
+* POST a genre
+* @param: uuid
+* @returns: the uuid of posted genre
+*/
+app.post("/postGenre", (req, res) => {
   let uuid = Helpers.generateUUID()
     pg.insert({
       uuid: uuid,
@@ -108,6 +129,11 @@ app.post("/genre", (req, res) => {
     })
 })
 
+/**
+* GET all genres
+* @param: none
+* @returns: all genres from genre table
+*/
 app.get('/genres', async (req, res) => {
   const result = await pg
     .select(['uuid', 'title', 'created_at'])
@@ -117,6 +143,11 @@ app.get('/genres', async (req, res) => {
   })
 })
 
+/**
+ * GET genre by UUID
+ * @param: uuid 
+ * @returns: one genre specified by uuid
+ */
 app.get('/genre/:uuid', async (req, res) => {
   const result = await pg
     .select(['uuid', 'title', 'created_at'])
@@ -127,8 +158,12 @@ app.get('/genre/:uuid', async (req, res) => {
   })
 })
 
-/* Update Genre By UUID */
-app.patch("/genre/:uuid", async (req, res) => {
+/**
+* PATCH genre by UUID
+* @param: object with properties that are getting patched
+* @returns: status code 200
+*/
+app.patch("/updateGenre/:uuid", async (req, res) => {
   pg('genreTable')
     .where({uuid: req.params.uuid})
     .update(req.body)
@@ -137,7 +172,12 @@ app.patch("/genre/:uuid", async (req, res) => {
   })
 })
 
-app.delete("/genre", (req, res) => {
+/**
+* DELETE artist
+* @param: uuid
+* @returns: status code 200
+*/
+app.delete("/deleteGenre", (req, res) => {
   pg('genreTable')
     .where({ uuid: req.body.uuid })
     .del()
@@ -146,9 +186,9 @@ app.delete("/genre", (req, res) => {
   })
 })
 
-/*******************************/
-/*      Initialize Tables      */
-/*******************************/
+
+
+/*=================== Initialize Tables =====================*/
 
 async function initialiseTables() {
   await pg.schema.hasTable('artistTable').then(async (exists) => {

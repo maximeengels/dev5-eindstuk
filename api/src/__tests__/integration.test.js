@@ -9,7 +9,7 @@ describe('CRUD endpoint tests', () => {
 
   it("Return 200 when artist added to database and return a UUID", async (done) => {
     const response = await request
-      .post('/artist')
+      .post('/postArtist')
       .send({
         artistName: "Equal Idiots",
         description: "Equal Idiots is een Belgische garagerockband uit Hoogstraten, bestaande uit Thibault Christiaensen (zaen gitaar) en Pieter Bruurs (drums).",
@@ -28,7 +28,7 @@ describe('CRUD endpoint tests', () => {
     } catch (error) {}
   })
   it("Return 200 when genre is deleted", async (done) => {
-      const response = await request.delete("/genre").send({ uuid: uuid })
+      const response = await request.delete("/deleteGenre").send({ uuid: uuid })
       expect(response.status).toBe(200)
       done()
   })
