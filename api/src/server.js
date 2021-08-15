@@ -1,6 +1,6 @@
 const express = require('express')
-const bodyParser = require('body-parser');
-const http = require('http');
+const bodyParser = require('body-parser')
+const http = require('http')
 const Helpers = require('./utils/helpers.js')
 
 const port = 3000
@@ -10,22 +10,22 @@ const pg = require('knex')({
   version: '9.6',      
   searchPath: ['knex', 'public'],
   connection: process.env.PG_CONNECTION_STRING ? process.env.PG_CONNECTION_STRING : 'postgres://example:example@localhost:5432/test'
-});
+})
 
 
-const app = express();
-http.Server(app); 
+const app = express()
+http.Server(app)
 
 
-app.use(bodyParser.json());
+app.use(bodyParser.json())
 app.use(
   bodyParser.urlencoded({
     extended: true
   })
-);  
+)
 
 // Endpoint test
-app.get('/test', (req, res) => {
+app.get("/test", (req, res) => {
   res.status(200).send();
 })
 
@@ -36,7 +36,7 @@ app.get('/test', (req, res) => {
 
 /* Create Artist */
 app.post("/artist", (req, res) => {
-  let uuid = Helpers.generateUUID();
+  let uuid = Helpers.generateUUID()
     pg.insert({
       uuid: uuid,
       artistName: req.body.artistName,
@@ -46,14 +46,14 @@ app.post("/artist", (req, res) => {
     })
     .into("artistTable")
     .then(() => {
-      res.json({ uuid: uuid });
-    });
-});
+      res.json({ uuid: uuid })
+    })
+})
 
 /* Get Artist By UUID */
 app.get('/artist/:uuid', async (req, res) => {
   const result = await pg
-    .select(['uuid', 'title', 'created_at'])
+    .select(["uuid", "artistName", "description", "genreName", "created_at"])
     .from('artistTable')
     .where({uuid: req.params.uuid})
   res.json({
@@ -71,23 +71,23 @@ app.get("/artists", async (req, res) => {
 })
 
 /* Update Artist By UUID */
-app.patch("/artist/:uuid", async (req, res) => {
+app.patch("/artist/:uuid", (req, res) => {
     pg('artistTable')
       .where({uuid: req.params.uuid})
       .update(req.body)
-});
+      .then(() => {
+        res.sendStatus(200)
+      })
+})
 
 /* Delete Request */
-app.delete("/artist", async (req, res) => {
-  if(req.body.hasOwnProperty('uuid')){
-    const result = await pg.from("artistTable").where({ uuid: req.body.uuid }).del().then((data) => {
-        console.log(`Delete storyblock with following uuid ${req.body.uuid}`)
-        res.json(data)
-    }).catch(() =>  res.status(400).send())
-  }else{
-    console.log("No uuid found")
-    res.status(400).send()
-  }
+app.delete("/artist", (req, res) => {
+  pg('artistTable')
+    .where({ uuid: req.body.uuid })
+    .del()
+    .then(() => {
+      res.sendStatus(200);
+  })
 })
 
 
@@ -97,16 +97,16 @@ app.delete("/artist", async (req, res) => {
 
 /* Create Genre */
 app.post("/genre", (req, res) => {
-  let uuid = Helpers.generateUUID();
+  let uuid = Helpers.generateUUID()
     pg.insert({
       uuid: uuid,
       created_at: new Date(),
     })
     .into("genreTable")
     .then(() => {
-      res.json({ uuid: uuid });
-    });
-});
+      res.json({ uuid: uuid })
+    })
+})
 
 app.get('/genres', async (req, res) => {
   const result = await pg
@@ -132,7 +132,10 @@ app.patch("/genre/:uuid", async (req, res) => {
   pg('genreTable')
     .where({uuid: req.params.uuid})
     .update(req.body)
-});
+    .then(() => {
+      res.sendStatus(200)
+  })
+})
 
 app.delete("/genre", (req, res) => {
   pg('genreTable')
@@ -141,7 +144,7 @@ app.delete("/genre", (req, res) => {
     .then(() => {
       res.sendStatus(200);
   })
-});
+})
 
 /*******************************/
 /*      Initialize Tables      */
@@ -170,7 +173,7 @@ async function initialiseTables() {
         .createTable('genreTable', (table) => {
           table.increments();
           table.uuid('uuid');
-          table.string('title');
+          table.string('genreName');
           table.timestamps(true, true);
         })
         .then(async () => {
@@ -181,7 +184,7 @@ async function initialiseTables() {
             .table('genreTable')
             .insert({ 
               uuid, 
-              title: `Genre No.${i}` 
+              genreName: `Genre No.${i}` 
             })
           }
         });
