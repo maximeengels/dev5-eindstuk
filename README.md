@@ -31,7 +31,7 @@ The Seeve API uses two tables to manage its content. Both tables are accessible 
 
 You can modify this table by using the following endpoints:
 
-`POST /postArtist`
+- `POST /postArtist`
     - Posts an artist to the database.
     - Requires a body with the following properties: 
         ```js
@@ -41,13 +41,13 @@ You can modify this table by using the following endpoints:
             genreName: String
         }
         ```
-`GET /artists`
+- `GET /artists`
     - Returns all artists from the database.
-`GET /artist/:uuid`
+- `GET /artist/:uuid`
     - Returns a specific artist by uuid.
-`PATCH /updateArtist/:uuid`
+- `PATCH /updateArtist/:uuid`
     - Updates the content of a specific artist by uuid.
-`DELETE /deleteArtist/:uuid`
+- `DELETE /deleteArtist/:uuid`
     - Deletes a specific artist by uuid.
 
 ---
@@ -56,15 +56,15 @@ You can modify this table by using the following endpoints:
 
 You can modify this table by using the following endpoints:
 
-`POST /postGenre`
+- `POST /postGenre`
     - Posts a genre to the database.
-`GET /genres`
+- `GET /genres`
     - Returns all genres from the database.
-`GET /genre/:uuid`
+- `GET /genre/:uuid`
     - Returns a specific genre by uuid.
-`PATCH /updateGenre/:uuid`
+- `PATCH /updateGenre/:uuid`
     - Updates the content of a specific genre by uuid.
-`DELETE /deleteGenre/:uuid`
+- `DELETE /deleteGenre/:uuid`
     - Deletes a specific genre by uuid.
 
 
